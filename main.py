@@ -1,45 +1,63 @@
-import cv2 as cv
-import numpy as np
-from matplotlib import pyplot as plt
-'''
-img = cv.imread('test.JPG',0)
-ret,thresh1 = cv.threshold(img,127,255,cv.THRESH_BINARY)
-ret,thresh2 = cv.threshold(img,127,255,cv.THRESH_BINARY_INV)
-ret,thresh3 = cv.threshold(img,127,255,cv.THRESH_TRUNC)
-ret,thresh4 = cv.threshold(img,127,255,cv.THRESH_TOZERO)
-ret,thresh5 = cv.threshold(img,127,255,cv.THRESH_TOZERO_INV)
-titles = ['Original Image','BINARY','BINARY_INV','TRUNC','TOZERO','TOZERO_INV']
-images = [img, thresh1, thresh2, thresh3, thresh4, thresh5]
-for i in range(6):
-    plt.subplot(2,3,i+1),plt.imshow(images[i],'gray',vmin=0,vmax=255)
-    plt.title(titles[i])
-    plt.xticks([]),plt.yticks([])
-plt.show()
-'''
+#!/usr/bin/env python
 
-import cv2 as cv
-import numpy as np
-from matplotlib import pyplot as plt
-img = cv.imread('test.JPG',0)
-# global thresholding
-ret1,th1 = cv.threshold(img,127,255,cv.THRESH_BINARY)
-# Otsu's thresholding
-ret2,th2 = cv.threshold(img,0,255,cv.THRESH_BINARY+cv.THRESH_OTSU)
-# Otsu's thresholding after Gaussian filtering
-blur = cv.GaussianBlur(img,(5,5),0)
-ret3,th3 = cv.threshold(blur,0,255,cv.THRESH_BINARY+cv.THRESH_OTSU)
-# plot all the images and their histograms
-images = [img, 0, th1,
-          img, 0, th2,
-          blur, 0, th3]
-titles = ['Original Noisy Image','Histogram','Global Thresholding (v=127)',
-          'Original Noisy Image','Histogram',"Otsu's Thresholding",
-          'Gaussian filtered Image','Histogram',"Otsu's Thresholding"]
-for i in range(3):
-    plt.subplot(3,3,i*3+1),plt.imshow(images[i*3],'gray')
-    plt.title(titles[i*3]), plt.xticks([]), plt.yticks([])
-    plt.subplot(3,3,i*3+2),plt.hist(images[i*3].ravel(),256)
-    plt.title(titles[i*3+1]), plt.xticks([]), plt.yticks([])
-    plt.subplot(3,3,i*3+3),plt.imshow(images[i*3+2],'gray')
-    plt.title(titles[i*3+2]), plt.xticks([]), plt.yticks([])
-plt.show()
+import sys
+
+from queue import Queue
+from PIL import Image
+
+start = (400,984)
+end = (398,25)
+
+def iswhite(value):
+    if value == (255,255,255):
+        return True
+
+def getadjacent(n):
+    x,y = n
+    return [(x-1,y),(x,y-1),(x+1,y),(x,y+1)]
+
+def BFS(start, end, pixels):
+
+    queue = Queue()
+    queue.put([start]) # Wrapping the start tuple in a list
+
+    while not queue.empty():
+        print("while")
+        path = queue.get() 
+        pixel = path[-1]
+
+        if pixel == end:
+            return path
+
+        for adjacent in getadjacent(pixel):
+            x,y = adjacent
+            print("x,y's color=",x,y,pixels[x,y])
+            if iswhite(pixels[x,y]):
+                pixels[x,y] = (127,127,127) # see note
+                new_path = list(path)
+                new_path.append(adjacent)
+                queue.put(new_path)
+
+    print("Queue has been exhausted. No answer was found.")
+
+
+if __name__ == '__main__':
+
+    # invoke: python mazesolver.py <mazefile> <outputfile>[.jpg|.png|etc.]
+    #base_img = Image.open(sys.argv[1])
+    base_img = Image.open("maze.jpg")
+    base_pixels = base_img.load()
+
+    path = BFS(start, end, base_pixels)
+    print("path=",path)
+    #path_img = Image.open(sys.argv[1])
+    
+    path_img = Image.open("maze.jpg")
+    path_pixels = path_img.load()
+    print("path_pixels=",path_pixels)
+    for position in path:
+        x,y = position
+        path_pixels[x,y] = (255,0,0) # red
+
+    #path_img.save(sys.argv[2])
+    path_img.save("maze1.jpg")
