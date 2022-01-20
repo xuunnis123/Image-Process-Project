@@ -64,7 +64,6 @@ SIFT Descriptor 進行特徵解釋
 * Homography在查到的資料中有提到需要使用最少四組pair。
 * 執行到最後我們就能夠透過RANSAC的方式來找出在threshold中最多符合的點就是最好的Homography matrix。
 * 下圖是我的程式碼調整過程發現準確率滿高的一組參數。 
-
 ![](https://i.imgur.com/PLEEvQq.png)
 
 * 最後調整後可以用的點為：26個。 
@@ -83,6 +82,7 @@ SIFT Descriptor 進行特徵解釋
 
 
 ==輪廓點、Dilate、Erosion==
+
 8.	接合完兩張以後，存下接合成的圖後準備走迷宮。
 實作完兩張圖分別為左圖跟右圖的接合後，接著呼叫Maze class中的 runMaze()，進行Maze的處理。
 9.	將讀進來的地圖改成灰階。
@@ -102,7 +102,9 @@ gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
 將剛剛的二值圖傳入後，結合剛剛findContour找出來的輪廓點，進行畫圖。最後變成
   (第一個drawContours繪製結果)
+  
   ![](https://i.imgur.com/W5OJTql.png)
+  
 (第二個延續上面一張的結果再調整)
 	  ![](https://i.imgur.com/yIvg0HM.png)
 
@@ -132,11 +134,9 @@ gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
 15.	之所以要經過13、14兩個步驟是因為我們想要拿到輪廓邊的變化。
 透過第13步先膨脹然後第14步再侵蝕掉的兩張圖，互相比較差異就能夠畫出一張差異圖，而這個差異圖就是我們的路線。
- 
  ![](https://i.imgur.com/SVjjY6r.png)
 
 差異結果 
-
 ![](https://i.imgur.com/PFki9Oj.png)
 
 16.	將得到的結果應用回去原圖並輸出。
@@ -193,7 +193,8 @@ Channel g的部分不需套上這個遮罩，因為我希望最後使用綠色�
 
 經過這次的影像處理作業，對於影像接合以及其中上課提到的演算法更加了解，雖然有些數學理論不太確定怎麼推導，但是再盡力了解與參考網路上一些教學後，看到能成功做出接合的動作，還滿有收穫的。
 不過有出現偶爾還是會不準的情況，如下圖，圖片接合時出現歪掉的情況，自己設想應該是RANSAC那一塊出問題，可能在隨機抓取的時候出現誤差。目前遇到這個問題的時候，是直接重新執行第二次就能成功得到所要的結果了。
- ![](https://i.imgur.com/y4fd0Nf.png)
+
+![](https://i.imgur.com/y4fd0Nf.png)
 ![](https://i.imgur.com/4KW02W6.png)
 
  
