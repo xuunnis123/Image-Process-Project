@@ -101,12 +101,11 @@ gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 ![](https://i.imgur.com/STszbBd.png)
 
 將剛剛的二值圖傳入後，結合剛剛findContour找出來的輪廓點，進行畫圖。最後變成
-  (第一個drawContours繪製結果)
-  
-  ![](https://i.imgur.com/W5OJTql.png)
+(第一個drawContours繪製結果)
+![](https://i.imgur.com/W5OJTql.png)
   
 (第二個延續上面一張的結果再調整)
-	  ![](https://i.imgur.com/yIvg0HM.png)
+![](https://i.imgur.com/yIvg0HM.png)
 
 11.	再做一次二值化，確保是灰階圖，因為待會的Dilate 以及 Erosion是針對白色的部分做處理。
 12.	處理卷積
